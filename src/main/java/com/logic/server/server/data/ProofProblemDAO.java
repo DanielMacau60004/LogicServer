@@ -31,7 +31,7 @@ public class ProofProblemDAO {
     private boolean isFOL;
 
     public ProofProblemDTO toDTO() {
-        return new ProofProblemDTO(conclusion, premises, isFOL);
+        return new ProofProblemDTO(id, conclusion, premises, isFOL);
     }
 
     public String toString() {

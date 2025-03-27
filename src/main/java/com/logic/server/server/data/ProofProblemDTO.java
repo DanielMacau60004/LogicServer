@@ -11,6 +11,8 @@ import java.util.Set;
 @AllArgsConstructor
 public class ProofProblemDTO {
 
+    private long id;
+
     private String conclusion;
 
     private Set<String> premises;
@@ -18,7 +20,7 @@ public class ProofProblemDTO {
     private boolean isFOL;
 
     public ProofProblemDAO toDAO() {
-        return new ProofProblemDAO(0L, conclusion, premises, isFOL);
+        return new ProofProblemDAO(id, conclusion, premises, isFOL);
     }
 
 }

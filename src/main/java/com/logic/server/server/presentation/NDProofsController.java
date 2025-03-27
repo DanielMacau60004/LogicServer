@@ -42,7 +42,7 @@ public class NDProofsController implements NDProofsAPI{
         try {
             return ResponseDTO.entity(ndProofsApp.getPLProblem(problemNum));
         } catch (Exception e) {
-            return ResponseDTO.error(e, HttpStatus.BAD_REQUEST);
+            return ResponseDTO.error(e, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -51,7 +51,7 @@ public class NDProofsController implements NDProofsAPI{
         try {
             return ResponseDTO.entity(ndProofsApp.getFOLProblem(problemNum));
         } catch (Exception e) {
-            return ResponseDTO.error(e, HttpStatus.BAD_REQUEST);
+            return ResponseDTO.error(e, HttpStatus.NOT_FOUND);
         }
     }
 
