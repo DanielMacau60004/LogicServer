@@ -1,4 +1,4 @@
-package com.logic.server.server.data;
+package com.logic.server.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

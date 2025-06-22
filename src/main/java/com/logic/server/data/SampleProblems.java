@@ -1,4 +1,4 @@
-package com.logic.server.server.data;
+package com.logic.server.data;
 
 import com.logic.api.LogicAPI;
 import jakarta.transaction.Transactional;
@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 public class SampleProblems implements CommandLineRunner {
@@ -60,15 +59,37 @@ public class SampleProblems implements CommandLineRunner {
                 createNDProofProblem("¬(¬a ∨ ¬b); a ∧ b", false),
 
                 createNDProofProblem("¬p → q; r ∨ ¬q; p → (a ∨ b); ¬r ∧ ¬b; a", false),
+                createNDProofProblem("(p ∧ q) → (r ∨ s); (p → r) ∨ (q → s)", false),
+
+                createNDProofProblem("((a → a) ∧ (a → a)) ∧ ((a → a) ∧ (a → a))", false),
+                createNDProofProblem("(p ∧ q) → (r ∨ s); (p → r) ∨ (q → s)",false),
+                createNDProofProblem("((p → q) → (¬p ∨ q)) ∧ ((¬p ∨ q) → (p → q))",false),
+                createNDProofProblem("(((p ∧ q) ∨ (p ∧ ¬q)) ∨ (¬p ∧ q)) ∨ (¬p ∧ ¬q)",false),
+                createNDProofProblem("(((p → (q ∨ s)) ∧ ((p ∧ r) → s)) ∧ ((s ∧ t) → (p ∨ ¬q))) → (((p ∧ (q → r)) → s) ∧ (((q ∧ s) ∧ t) → p))", false),
+                createNDProofProblem("((p ∨ q) ∨ (r ∨ s)) → ((p ∨ s) ∨ (r ∨ q))", false),
+                createNDProofProblem("(s ∨ t) → (s → ¬t); (s → ¬t) → (t → k); s ∨ t; s ∨ k", false),
+                createNDProofProblem("(¬a ∨ ¬b) → ((c → (a ∧ b)) → ¬c)", false),
 
                 createNDProofProblem("∀x P(x) ∨ ∀x Q(x); ∀x (P(x) ∨ Q(x))", true),
                 createNDProofProblem("∀x (P(x) ∧ Q(x)); ∀x P(x) ∧ ∀x Q(x)", true),
                 createNDProofProblem("(∀x P(x) ∧ ∀x Q(x)) → ∀x (P(x) ∧ Q(x))", true),
                 createNDProofProblem("∃x (P(x) ∧ Q(x)); ∃x P(x) ∧ ∃x Q(x)", true),
                 createNDProofProblem("(∃x P(x) ∨ ∃x Q(x)) → ∃x (P(x) ∨ Q(x))", true),
+                createNDProofProblem("∃x (P(x) ∨ Q(x)); ∃x P(x) ∨ ∃x Q(x)", true),
+                createNDProofProblem("∀x (P(x) → Q(x)); ∀x P(x) → ∀x Q(x)", true),
+                createNDProofProblem("∃y ∀x φ; ∀x ∃y φ", true),
+                createNDProofProblem("∃x ¬P(x) → ¬∀x P(x)", true),
+                createNDProofProblem("¬∀x P(x) → ∃x ¬P(x)", true),
+                createNDProofProblem("∀x ¬P(x) → ¬∃x P(x)", true),
+                createNDProofProblem("¬∃x P(x) → ∀x ¬P(x)", true),
+                createNDProofProblem("∃x φ → ¬∀x ¬φ", true),
+                createNDProofProblem("¬∀x ¬φ; ∃x φ", true),
+                createNDProofProblem("∀x φ → ¬∃x ¬φ", true),
                 createNDProofProblem("∀y (C(y) ∨ D(y)); ∀x (C(x) → L(x)); ∃x ¬L(x); ∃x D(x)", true),
                 createNDProofProblem("∀x (C(x) → S(x)); ∀x (¬A(x,b) → ¬S(x)); ∀x ((C(x)∨S(x)) → A(x,b))", true),
-                createNDProofProblem("L(a,b); ∀x (∃y (L(y,x) ∨ L(x,y)) → L(x,x)); ∃x L(x,a)", true)
+                createNDProofProblem("L(a,b); ∀x (∃y (L(y,x) ∨ L(x,y)) → L(x,x)); ∃x L(x,a)", true),
+                createNDProofProblem("∀x ∀y (L(x,y) → L(y,x)); ∃x ∀y L(x,y); ∀x ∃y L(x,y)", true)
+
         );
 
         List<ProofProblemDAO> result = userRepository.saveAll(users);

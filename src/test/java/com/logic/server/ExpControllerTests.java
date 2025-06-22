@@ -1,4 +1,4 @@
-package com.logic.server.server;
+package com.logic.server;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

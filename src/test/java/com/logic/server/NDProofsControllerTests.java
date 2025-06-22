@@ -1,4 +1,4 @@
-package com.logic.server.server;
+package com.logic.server;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,11 +6,12 @@ import com.logic.api.IFOLFormula;
 import com.logic.api.INDProof;
 import com.logic.api.IPLFormula;
 import com.logic.api.LogicAPI;
+import com.logic.exps.asts.others.ASTVariable;
 import com.logic.nd.algorithm.AlgoProofFOLBuilder;
 import com.logic.nd.algorithm.AlgoProofPLBuilder;
 import com.logic.nd.algorithm.AlgoSettingsBuilder;
 import com.logic.nd.algorithm.state.strategies.SizeTrimStrategy;
-import com.logic.server.server.data.ProofProblemDTO;
+import com.logic.server.data.ProofProblemDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -217,10 +218,11 @@ class NDProofsControllerTests {
                     .addPremises(premises)
                     .setAlgoSettingsBuilder(
                             new AlgoSettingsBuilder()
-                                    .setTotalClosedNodesLimit(10000)
-                                    .setHypothesesPerStateLimit(4)
+                                    .setTotalClosedNodes(10000)
+                                    .setHypothesesPerState(3)
                                     .setTimeout(500)
                                     .setTrimStrategy(new SizeTrimStrategy()))
+                    .addTerm(new ASTVariable("w"))
                     .build();
 
             mockMvc.perform(post("/nd/fol/problem/" + problem.getId()).content(proof.toString()))

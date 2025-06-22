@@ -1,4 +1,4 @@
-package com.logic.server.server.data;
+package com.logic.server.data;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

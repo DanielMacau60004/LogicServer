@@ -1,7 +1,8 @@
-package com.logic.server.server.presentation;
+package com.logic.server.presentation;
 
-import com.logic.server.server.application.ExpressionsApp;
-import com.logic.server.server.data.ResponseDTO;
+import com.logic.feedback.FeedbackLevel;
+import com.logic.server.application.ExpressionsApp;
+import com.logic.server.data.ResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,18 +19,18 @@ public class ExpressionsController implements ExpressionsAPI {
     }
 
     @Override
-    public ResponseEntity<String> verifyPLExpression(String formula) {
+    public ResponseEntity<String> verifyPLExpression(String formula, FeedbackLevel feedbackLevel) {
         try {
-            return ResponseDTO.entity(expressionsApp.verifyPLExpression(formula));
+            return ResponseDTO.entity(expressionsApp.verifyPLExpression(formula, feedbackLevel));
         } catch (Exception e) {
             return ResponseDTO.error(e, HttpStatus.BAD_REQUEST);
         }
     }
 
     @Override
-    public ResponseEntity<String> verifyFOLExpression(String formula) {
+    public ResponseEntity<String> verifyFOLExpression(String formula, FeedbackLevel feedbackLevel) {
         try {
-            return ResponseDTO.entity(expressionsApp.verifyFOLExpression(formula));
+            return ResponseDTO.entity(expressionsApp.verifyFOLExpression(formula, feedbackLevel));
         } catch (Exception e) {
             return ResponseDTO.error(e, HttpStatus.BAD_REQUEST);
         }
