@@ -1,5 +1,9 @@
 package com.logic.server.data;
 
+import com.logic.feedback.FeedbackLevel;
+import com.logic.feedback.api.IFormulaFeedback;
+import com.logic.feedback.api.INDProofFeedback;
+import com.logic.server.api.Components;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +15,13 @@ import java.util.Set;
 @AllArgsConstructor
 public class ExpDTO {
 
-    private String exp;
+    private Components.Component exp;
+    private FeedbackLevel feedbackLevel;
+    private boolean hasError;
 
+    public ExpDTO(IFormulaFeedback formulaFeedback) {
+        this.exp = Components.createComponent(formulaFeedback.getExpFeedback());
+        this.feedbackLevel = formulaFeedback.getFeedbackLevel();
+        this.hasError = formulaFeedback.hasError();
+    }
 }

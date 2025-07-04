@@ -1,14 +1,11 @@
 package com.logic.server.api;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.logic.exps.asts.IASTExp;
-import com.logic.feedback.FeedbackLevel;
+import com.logic.feedback.exp.IExpFeedback;
+import com.logic.feedback.nd.INDFeedback;
 import com.logic.nd.ERule;
-import com.logic.nd.asts.IASTND;
-import com.logic.nd.exceptions.NDRuleException;
 import com.logic.others.Utils;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,7 +21,16 @@ import java.util.stream.Collectors;
 
 public class Components {
 
-    // Common interface for all preview components
+    public static Component createComponent(IExpFeedback feedback) {
+        return new ExpComponent(feedback);
+    }
+
+    public static Component createComponent(INDFeedback feedback) {
+        if (feedback.getHypotheses() == null || feedback.getHypotheses().isEmpty())
+            return new ExpComponent(feedback);
+        return new TreeComponent(feedback);
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonTypeInfo(
             use = JsonTypeInfo.Id.NAME,
@@ -59,17 +65,6 @@ public class Components {
             this.type = type;
             this.errors = new LinkedHashMap<>();
         }
-
-        protected void appendNDErrors(List<NDRuleException> errors, FeedbackLevel feedback) {
-            for (NDRuleException e : errors) {
-                List<IASTND> previews = e.getPreviews(feedback);
-                List<Component> map = previews != null ? previews.stream()
-                        .map(m -> JsonMapper.convertToPreviewComponent(m, feedback)).toList() : null;
-                this.errors.put(e.getFeedback(feedback), map);
-            }
-        }
-
-        public abstract <T> T accept(ComponentVisitor<T> visitor);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -79,19 +74,25 @@ public class Components {
         public String value;
         public MarkComponent mark;
 
-        @JsonIgnore
-        protected IASTND nd;
-
-        public ExpComponent(IASTExp value) {
+        public ExpComponent(IExpFeedback feedback) {
             super("EXP");
-            this.value = Utils.getToken(value.toString());
+            this.value = Utils.getToken(feedback.getExp());
+
+            if (feedback.hasFeedback())
+                errors.put(feedback.getFeedback(), null);
         }
 
-        public ExpComponent(IASTND nd, IASTExp value, String mark) {
+        public ExpComponent(INDFeedback feedback) {
             super("EXP");
-            this.nd = nd;
-            this.value = Utils.getToken(value.toString());
-            this.mark = new MarkComponent(mark);
+            this.value = Utils.getToken(feedback.getConclusion().getExp());
+
+            if (!feedback.getMarks().isEmpty())
+                this.mark = new MarkComponent(feedback.getMarks().getFirst());
+
+            if (feedback.getConclusion().hasFeedback()) {
+                errors.put(feedback.getConclusion().getFeedback(), feedback.getConclusion().getPreviews().stream()
+                        .map(Components::createComponent).toList());
+            }
         }
 
         @Override
@@ -101,10 +102,6 @@ public class Components {
             return str;
         }
 
-        @Override
-        public <T> T accept(ComponentVisitor<T> visitor) {
-            return visitor.visit(this);
-        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -115,11 +112,6 @@ public class Components {
         public MarkComponent(String value) {
             super("MARK");
             this.value = value;
-        }
-
-        @Override
-        public <T> T accept(ComponentVisitor<T> visitor) {
-            return visitor.visit(this);
         }
 
         @Override
@@ -140,12 +132,6 @@ public class Components {
         }
 
         @Override
-        public <T> T accept(ComponentVisitor<T> visitor) {
-            return visitor.visit(this);
-        }
-
-
-        @Override
         public String toString() {
             return value;
         }
@@ -160,27 +146,17 @@ public class Components {
         public RuleComponent rule;
         public List<Component> hypotheses;
 
-        @JsonIgnore
-        protected IASTND nd;
-
-        public TreeComponent(
-                IASTND nd,
-                IASTExp conclusion,
-                ERule rule,
-                List<String> marks,
-                List<Component> hypotheses
-        ) {
+        public TreeComponent(INDFeedback feedback) {
             super("TREE");
-            this.conclusion = new ExpComponent(conclusion);
-            this.marks = marks.stream().map(MarkComponent::new).toList();
-            this.rule = new RuleComponent(rule);
-            this.hypotheses = hypotheses;
-            this.nd = nd;
-        }
 
-        @Override
-        public <T> T accept(ComponentVisitor<T> visitor) {
-            return visitor.visit(this);
+            this.conclusion = new ExpComponent(feedback.getConclusion());
+            this.marks = feedback.getMarks().stream().map(MarkComponent::new).collect(Collectors.toList());
+            this.rule = new RuleComponent(feedback.getRule());
+            this.hypotheses = feedback.getHypotheses().stream().map(Components::createComponent).toList();
+
+            if (feedback.hasFeedback())
+                errors.put(feedback.getFeedback(), feedback.getPreviews().stream()
+                        .map(Components::createComponent).toList());
         }
 
         @Override

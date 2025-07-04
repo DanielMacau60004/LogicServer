@@ -1,5 +1,6 @@
 package com.logic.server.data;
 
+import com.logic.server.others.StringSetConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

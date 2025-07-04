@@ -79,14 +79,12 @@ public interface NDProofsAPI {
             produces = "application/json"
     )
     ResponseEntity<String> solvePLProblem(
-            @RequestParam("problem") String[] problem,
-            @RequestParam("level") FeedbackLevel feedbackLevel);
+            @RequestParam("problem") String[] problem);
 
     @GetMapping(
             value = "/fol/problem/solve",
             produces = "application/json"
     )
     ResponseEntity<String> solveFOLProblem(
-            @RequestParam("problem") String[] problem,
-            @RequestParam("level") FeedbackLevel feedbackLevel);
+            @RequestParam("problem") String[] problem);
 }

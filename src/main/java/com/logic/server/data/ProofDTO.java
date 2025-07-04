@@ -1,18 +1,16 @@
 package com.logic.server.data;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.logic.api.IFormula;
 import com.logic.api.INDProof;
-import com.logic.feedback.FeedbackException;
 import com.logic.feedback.FeedbackLevel;
+import com.logic.feedback.api.INDProofFeedback;
 import com.logic.server.api.Components;
-import com.logic.server.api.JsonMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -26,29 +24,26 @@ public class ProofDTO {
     private Components.Component proof;
     private FeedbackLevel feedbackLevel;
 
-    private String mainException;
+    private boolean hasError;
 
-    private boolean hasErrors;
-
-    public ProofDTO(INDProof proof, FeedbackException mainException, FeedbackLevel feedbackLevel, boolean hasErrors) {
-        this.feedbackLevel = feedbackLevel;
-        if(feedbackLevel == null)
-            this.feedbackLevel = FeedbackLevel.NONE;
-
-        this.conclusion = proof.getConclusion().toString();
+    public ProofDTO(INDProofFeedback proofFeedback) {
+        this.feedbackLevel = proofFeedback.getFeedbackLevel();
         this.premises = new HashSet<>();
         this.hypotheses = new HashMap<>();
-        this.proof = JsonMapper.convertToPreviewComponent(proof.getAST(), feedbackLevel);
 
-        if(mainException != null)
-            this.mainException = mainException.getFeedback(feedbackLevel);
+        this.proof = Components.createComponent(proofFeedback.getFeedback());
+        this.hasError = proofFeedback.hasError();
 
-        this.hasErrors = hasErrors;
+        INDProof proof = proofFeedback.getProof();
+        if (proof != null) {
+            this.conclusion = proof.getConclusion().toString();
+            proof.getHypotheses().forEachRemaining(e -> {
+                if (e.getKey() != null && e.getValue() != null)
+                    hypotheses.put(e.getKey(), e.getValue().toString());
+            });
+            proof.getPremises().forEachRemaining(i -> premises.add(i.toString()));
+        }
 
-        proof.getHypotheses().forEachRemaining(e -> {
-            if (e.getKey() != null && e.getValue() != null)
-                hypotheses.put(e.getKey(), e.getValue().toString());
-        });
-        proof.getPremises().forEachRemaining(i -> premises.add(i.toString()));
     }
+
 }

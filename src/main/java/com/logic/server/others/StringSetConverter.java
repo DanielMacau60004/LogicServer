@@ -1,10 +1,9 @@
-package com.logic.server.data;
+package com.logic.server.others;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Converter

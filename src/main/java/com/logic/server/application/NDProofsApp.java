@@ -3,10 +3,12 @@ package com.logic.server.application;
 import com.logic.api.*;
 import com.logic.exps.asts.others.ASTVariable;
 import com.logic.feedback.FeedbackLevel;
-import com.logic.nd.algorithm.*;
-import com.logic.nd.algorithm.state.strategies.HeightTrimStrategy;
-import com.logic.nd.algorithm.state.strategies.SizeTrimStrategy;
-import com.logic.nd.exceptions.NDException;
+import com.logic.feedback.api.FeedbackAPI;
+import com.logic.feedback.api.INDProofFeedback;
+import com.logic.feedback.nd.NDFeedbacks;
+import com.logic.feedback.nd.algorithm.*;
+import com.logic.feedback.nd.algorithm.proofs.strategies.SizeTrimStrategy;
+import com.logic.others.Utils;
 import com.logic.server.api.Components;
 import com.logic.server.data.ProofDTO;
 import com.logic.server.data.ProofProblemDAO;
@@ -52,43 +54,33 @@ public class NDProofsApp {
     }
 
     public ProofDTO verifyGeneralProblem(Components.TreeComponent tree, FeedbackLevel feedbackLevel, boolean isFOL) {
-        try {
-            System.out.println(tree.toString() + " " + isFOL);
-            INDProof ndProof = isFOL ? LogicAPI.parseNDFOLProof(tree.toString()) : LogicAPI.parseNDPLProof(tree.toString());
-            return new ProofDTO(ndProof, null, feedbackLevel, false);
-        } catch (NDException e) {
-            return new ProofDTO(e.getProof(), null, feedbackLevel, true);
-        }
+        System.out.println(tree.toString() + " " + isFOL);
+        INDProofFeedback ndProof = isFOL ? FeedbackAPI.parseNDFOL(tree.toString(), feedbackLevel)
+                : FeedbackAPI.parseNDPL(tree.toString(), feedbackLevel);
+
+        return new ProofDTO(ndProof);
     }
 
     public ProofDTO verifyProblem(Components.TreeComponent tree, String[] problem, FeedbackLevel feedbackLevel, boolean isFOL) {
         if (problem.length == 0)
             throw new RuntimeException("Invalid problem!");
 
-        try {
-            IFormula conclusion = null;
-            Set<IFormula> premises = new HashSet<>();
+        IFormula conclusion = null;
+        Set<IFormula> premises = new HashSet<>();
 
-            for (int i = 0; i < problem.length; i++) {
-                IFormula formula = isFOL ? LogicAPI.parseFOL(problem[i]) : LogicAPI.parsePL(problem[i]);
-                if (i == problem.length - 1) conclusion = formula;
-                else premises.add(formula);
-            }
-
-            assert conclusion != null;
-            INDProof ndProof = isFOL ? LogicAPI.parseNDFOLProof(tree.toString()) : LogicAPI.parseNDPLProof(tree.toString());
-            ndProof = LogicAPI.checkNDProblem(ndProof, premises, conclusion);
-
-            return new ProofDTO(ndProof, null, feedbackLevel, false);
-        } catch (NDException e) {
-            if (e.getMainException() != null)
-                return new ProofDTO(e.getProof(), e.getMainException(), feedbackLevel, true);
-            return new ProofDTO(e.getProof(), null, feedbackLevel, true);
+        for (int i = 0; i < problem.length; i++) {
+            IFormula formula = isFOL ? LogicAPI.parseFOL(problem[i]) : LogicAPI.parsePL(problem[i]);
+            if (i == problem.length - 1) conclusion = formula;
+            else premises.add(formula);
         }
 
+        INDProofFeedback ndProof = isFOL ? FeedbackAPI.parseNDFOLProblem(tree.toString(), feedbackLevel, premises, conclusion)
+                : FeedbackAPI.parseNDPLProblem(tree.toString(), feedbackLevel, premises, conclusion);
+
+        return new ProofDTO(ndProof);
     }
 
-    public ProofDTO solvePLProblem(String[] problem, FeedbackLevel feedbackLevel) {
+    public ProofDTO solvePLProblem(String[] problem) {
         IPLFormula conclusion = LogicAPI.parsePL(problem[problem.length - 1]);
         Set<IPLFormula> premises = new HashSet<>();
 
@@ -96,20 +88,20 @@ public class NDProofsApp {
             premises.add(LogicAPI.parsePL(premise));
 
         INDProof proof = new AlgoProofPLBuilder(
-                new AlgoProofPLProblemBuilder(conclusion)
+                new AlgoProofPLMainGoalBuilder(conclusion)
                         .addPremises(premises))
                 .setAlgoSettingsBuilder(
                         new AlgoSettingsBuilder()
                                 .setTimeout(1500)
-                                .setHypothesesPerState(Integer.MAX_VALUE)
+                                .setHypothesesPerGoal(Integer.MAX_VALUE)
                                 .setTotalClosedNodes(Integer.MAX_VALUE)
                                 .setTrimStrategy(new SizeTrimStrategy()))
                 .build();
 
-        return new ProofDTO(proof, null, feedbackLevel, true);
+        return new ProofDTO(NDFeedbacks.parseNDPLFeedback(proof.getAST(), FeedbackLevel.NONE));
     }
 
-    public ProofDTO solveFOLProblem(String[] problem, FeedbackLevel feedbackLevel) {
+    public ProofDTO solveFOLProblem(String[] problem) {
         IFOLFormula conclusion = LogicAPI.parseFOL(problem[problem.length - 1]);
         Set<IFOLFormula> premises = new HashSet<>();
 
@@ -117,18 +109,18 @@ public class NDProofsApp {
             premises.add(LogicAPI.parseFOL(premise));
 
         INDProof proof = new AlgoProofFOLBuilder(
-                new AlgoProofFOLProblemBuilder(conclusion)
+                new AlgoProofFOLMainGoalBuilder(conclusion)
                         .addPremises(premises)
                         .addTerm(new ASTVariable("w"))
         )
                 .setAlgoSettingsBuilder(
                         new AlgoSettingsBuilder()
                                 .setTotalClosedNodes(10000)
-                                .setHypothesesPerState(4)
+                                .setHypothesesPerGoal(4)
                                 .setTimeout(1000)
                                 .setTrimStrategy(new SizeTrimStrategy()))
                 .build();
 
-        return new ProofDTO(proof, null, feedbackLevel, true);
+        return new ProofDTO(NDFeedbacks.parseNDFOLFeedback(proof.getAST(), FeedbackLevel.NONE));
     }
 }

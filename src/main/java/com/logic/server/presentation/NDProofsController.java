@@ -97,18 +97,18 @@ public class NDProofsController implements NDProofsAPI {
     }
 
     @Override
-    public ResponseEntity<String> solvePLProblem(String[] problem, FeedbackLevel feedbackLevel) {
+    public ResponseEntity<String> solvePLProblem(String[] problem) {
         try {
-            return ResponseDTO.entity(ndProofsApp.solvePLProblem(problem, feedbackLevel));
+            return ResponseDTO.entity(ndProofsApp.solvePLProblem(problem));
         } catch (Exception e) {
             return ResponseDTO.error(e, HttpStatus.BAD_REQUEST);
         }
     }
 
     @Override
-    public ResponseEntity<String> solveFOLProblem(String[] problem, FeedbackLevel feedbackLevel) {
+    public ResponseEntity<String> solveFOLProblem(String[] problem) {
         try {
-            return ResponseDTO.entity(ndProofsApp.solveFOLProblem(problem, feedbackLevel));
+            return ResponseDTO.entity(ndProofsApp.solveFOLProblem(problem));
         } catch (Exception e) {
             return ResponseDTO.error(e, HttpStatus.BAD_REQUEST);
         }
