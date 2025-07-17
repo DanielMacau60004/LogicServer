@@ -1,5 +1,6 @@
 package com.logic.server.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.logic.api.*;
 import com.logic.exps.asts.others.ASTVariable;
 import com.logic.feedback.FeedbackLevel;
@@ -8,6 +9,7 @@ import com.logic.feedback.api.INDProofFeedback;
 import com.logic.feedback.nd.NDFeedbacks;
 import com.logic.feedback.nd.algorithm.*;
 import com.logic.feedback.nd.algorithm.proofs.strategies.SizeTrimStrategy;
+import com.logic.feedback.nd.hints.Hints;
 import com.logic.others.Utils;
 import com.logic.server.api.Components;
 import com.logic.server.data.ProofDTO;
@@ -74,6 +76,12 @@ public class NDProofsApp {
             else premises.add(formula);
         }
 
+        try {
+            System.out.println(Utils.getToken(new ObjectMapper().writeValueAsString(tree)));
+            System.out.println(Utils.getToken(tree.toString()));
+        } catch (Exception e) {
+        }
+
         INDProofFeedback ndProof = isFOL ? FeedbackAPI.parseNDFOLProblem(tree.toString(), feedbackLevel, premises, conclusion)
                 : FeedbackAPI.parseNDPLProblem(tree.toString(), feedbackLevel, premises, conclusion);
 
@@ -123,4 +131,23 @@ public class NDProofsApp {
 
         return new ProofDTO(NDFeedbacks.parseNDFOLFeedback(proof.getAST(), FeedbackLevel.NONE));
     }
+
+    public String genHint(String[] problem, String[] goal, FeedbackLevel feedbackLevel, boolean isFOL) {
+        IFormula mainConclusion = isFOL ? LogicAPI.parseFOL(problem[problem.length - 1]) :
+                LogicAPI.parsePL(problem[problem.length - 1]);
+        Set<IFormula> mainPremises = new HashSet<>();
+
+        for (String premise : Arrays.copyOf(problem, problem.length - 1))
+            mainPremises.add(isFOL ? LogicAPI.parseFOL(premise) : LogicAPI.parsePL(premise));
+
+        IFormula goalConclusion = isFOL ? LogicAPI.parseFOL(goal[goal.length - 1]) :
+                LogicAPI.parsePL(goal[goal.length - 1]);
+        Set<IFormula> goalPremises = new HashSet<>();
+
+        for (String premise : Arrays.copyOf(goal, goal.length - 1))
+            goalPremises.add(isFOL ? LogicAPI.parseFOL(premise) : LogicAPI.parsePL(premise));
+
+        return Hints.generateHint(mainConclusion, mainPremises, goalConclusion, goalPremises, feedbackLevel, isFOL);
+    }
+
 }

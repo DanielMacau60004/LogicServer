@@ -3,6 +3,7 @@ package com.logic.server.api;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.logic.exps.asts.IASTExp;
 import com.logic.feedback.exp.IExpFeedback;
 import com.logic.feedback.nd.INDFeedback;
 import com.logic.nd.ERule;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 public class Components {
 
     public static Component createComponent(IExpFeedback feedback) {
-        return new ExpComponent(feedback);
+        return new ExpComponent(feedback, null);
     }
 
     public static Component createComponent(INDFeedback feedback) {
@@ -73,13 +74,18 @@ public class Components {
     public static class ExpComponent extends Component {
         public String value;
         public MarkComponent mark;
+        public boolean genHints;
+        public Map<String, String> env;
 
-        public ExpComponent(IExpFeedback feedback) {
+        public ExpComponent(IExpFeedback feedback, Map<String, String> env) {
             super("EXP");
             this.value = Utils.getToken(feedback.getExp());
 
+            this.env = env;
             if (feedback.hasFeedback())
                 errors.put(feedback.getFeedback(), null);
+
+            this.genHints = feedback.canGenHints();
         }
 
         public ExpComponent(INDFeedback feedback) {
@@ -89,10 +95,12 @@ public class Components {
             if (!feedback.getMarks().isEmpty())
                 this.mark = new MarkComponent(feedback.getMarks().getFirst());
 
-            if (feedback.getConclusion().hasFeedback()) {
+            if (feedback.getConclusion().hasFeedback())
                 errors.put(feedback.getConclusion().getFeedback(), feedback.getConclusion().getPreviews().stream()
                         .map(Components::createComponent).toList());
-            }
+
+            this.env = feedback.getEnv();
+            this.genHints = feedback.getConclusion().canGenHints();
         }
 
         @Override
@@ -145,14 +153,17 @@ public class Components {
         public List<MarkComponent> marks;
         public RuleComponent rule;
         public List<Component> hypotheses;
+        public boolean genHints;
+        public Map<String, String> env;
 
         public TreeComponent(INDFeedback feedback) {
             super("TREE");
 
-            this.conclusion = new ExpComponent(feedback.getConclusion());
+            this.conclusion = new ExpComponent(feedback.getConclusion(), feedback.getEnv());
             this.marks = feedback.getMarks().stream().map(MarkComponent::new).collect(Collectors.toList());
             this.rule = new RuleComponent(feedback.getRule());
             this.hypotheses = feedback.getHypotheses().stream().map(Components::createComponent).toList();
+            this.genHints = feedback.canGenHints();
 
             if (feedback.hasFeedback())
                 errors.put(feedback.getFeedback(), feedback.getPreviews().stream()

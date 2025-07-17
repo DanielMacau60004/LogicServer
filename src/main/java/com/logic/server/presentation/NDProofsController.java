@@ -113,4 +113,22 @@ public class NDProofsController implements NDProofsAPI {
             return ResponseDTO.error(e, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @Override
+    public ResponseEntity<String> verifyPLHint(String[] problem, String[] goal, FeedbackLevel feedbackLevel) {
+        try {
+            return ResponseDTO.entity(ndProofsApp.genHint(problem, goal, feedbackLevel, false));
+        } catch (Exception e) {
+            return ResponseDTO.error(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public ResponseEntity<String> verifyFOLHint(String[] problem, String[] goal, FeedbackLevel feedbackLevel) {
+        try {
+            return ResponseDTO.entity(ndProofsApp.genHint(problem, goal, feedbackLevel, true));
+        } catch (Exception e) {
+            return ResponseDTO.error(e, HttpStatus.BAD_REQUEST);
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.logic.server.data;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.logic.api.IFormula;
 import com.logic.api.INDProof;

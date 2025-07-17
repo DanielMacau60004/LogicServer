@@ -87,4 +87,23 @@ public interface NDProofsAPI {
     )
     ResponseEntity<String> solveFOLProblem(
             @RequestParam("problem") String[] problem);
+
+
+    @PostMapping(
+            value = "/pl/hint",
+            produces = "application/json"
+    )
+    ResponseEntity<String> verifyPLHint(
+            @RequestParam("problem") String[] problem,
+            @RequestParam("goal") String[] goal,
+            @RequestParam("level") FeedbackLevel feedbackLevel);
+
+    @PostMapping(
+            value = "/fol/hint",
+            produces = "application/json"
+    )
+    ResponseEntity<String> verifyFOLHint(
+            @RequestParam("problem") String[] problem,
+            @RequestParam("goal") String[] goal,
+            @RequestParam("level") FeedbackLevel feedbackLevel);
 }
