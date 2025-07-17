@@ -100,7 +100,7 @@ public class NDProofsApp {
                         .addPremises(premises))
                 .setAlgoSettingsBuilder(
                         new AlgoSettingsBuilder()
-                                .setTimeout(1000)
+                                .setTimeout(2000)
                                 .setHypothesesPerGoal(Integer.MAX_VALUE)
                                 .setTotalClosedNodes(Integer.MAX_VALUE)
                                 .setTrimStrategy(new SizeTrimStrategy()))
