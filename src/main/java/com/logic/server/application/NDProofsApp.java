@@ -100,7 +100,7 @@ public class NDProofsApp {
                         .addPremises(premises))
                 .setAlgoSettingsBuilder(
                         new AlgoSettingsBuilder()
-                                .setTimeout(1500)
+                                .setTimeout(1000)
                                 .setHypothesesPerGoal(Integer.MAX_VALUE)
                                 .setTotalClosedNodes(Integer.MAX_VALUE)
                                 .setTrimStrategy(new SizeTrimStrategy()))
@@ -125,7 +125,7 @@ public class NDProofsApp {
                         new AlgoSettingsBuilder()
                                 .setTotalClosedNodes(10000)
                                 .setHypothesesPerGoal(4)
-                                .setTimeout(1000)
+                                .setTimeout(2000)
                                 .setTrimStrategy(new SizeTrimStrategy()))
                 .build();
 
@@ -140,9 +140,18 @@ public class NDProofsApp {
         for (String premise : Arrays.copyOf(problem, problem.length - 1))
             mainPremises.add(isFOL ? LogicAPI.parseFOL(premise) : LogicAPI.parsePL(premise));
 
+
+        for(int i =0 ; i < goal.length; i++)
+            System.out.println(goal[i]);
+        try {
+            LogicAPI.parseFOL(goal[0]);
+        }catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         IFormula goalConclusion = isFOL ? LogicAPI.parseFOL(goal[goal.length - 1]) :
                 LogicAPI.parsePL(goal[goal.length - 1]);
         Set<IFormula> goalPremises = new HashSet<>();
+
 
         for (String premise : Arrays.copyOf(goal, goal.length - 1))
             goalPremises.add(isFOL ? LogicAPI.parseFOL(premise) : LogicAPI.parsePL(premise));
