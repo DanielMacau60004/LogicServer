@@ -1,5 +1,6 @@
 package com.logic.server.data;
 
+import com.logic.exps.ExpUtils;
 import com.logic.feedback.FeedbackLevel;
 import com.logic.feedback.api.IFormulaFeedback;
 import com.logic.feedback.api.INDProofFeedback;
