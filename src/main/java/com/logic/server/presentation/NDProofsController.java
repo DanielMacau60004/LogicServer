@@ -131,4 +131,22 @@ public class NDProofsController implements NDProofsAPI {
             return ResponseDTO.error(e, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @Override
+    public ResponseEntity<String> expsPL(String[] exps) {
+        try {
+            return ResponseDTO.entity(ndProofsApp.listPossibleFormulas(exps, false));
+        } catch (Exception e) {
+            return ResponseDTO.error(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public ResponseEntity<String> expsFOL(String[] exps) {
+        try {
+            return ResponseDTO.entity(ndProofsApp.listPossibleFormulas(exps, true));
+        } catch (Exception e) {
+            return ResponseDTO.error(e, HttpStatus.BAD_REQUEST);
+        }
+    }
 }

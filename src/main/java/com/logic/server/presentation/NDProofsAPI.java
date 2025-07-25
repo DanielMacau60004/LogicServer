@@ -106,4 +106,18 @@ public interface NDProofsAPI {
             @RequestParam("problem") String[] problem,
             @RequestParam("goal") String[] goal,
             @RequestParam("level") FeedbackLevel feedbackLevel);
+
+    @PostMapping(
+            value = "/pl/exps",
+            produces = "application/json"
+    )
+    ResponseEntity<String> expsPL(
+            @RequestParam("exps") String[] exps);
+
+    @PostMapping(
+            value = "/fol/exps",
+            produces = "application/json"
+    )
+    ResponseEntity<String> expsFOL(
+            @RequestParam("exps") String[] exps);
 }

@@ -2,20 +2,29 @@ package com.logic.server.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.logic.api.*;
+import com.logic.exps.ExpUtils;
+import com.logic.exps.asts.IASTExp;
+import com.logic.exps.asts.binary.ASTUniversal;
+import com.logic.exps.asts.others.AASTTerm;
+import com.logic.exps.asts.others.ASTBottom;
+import com.logic.exps.asts.others.ASTTop;
 import com.logic.exps.asts.others.ASTVariable;
+import com.logic.exps.asts.unary.ASTNot;
+import com.logic.exps.asts.unary.ASTParenthesis;
 import com.logic.feedback.FeedbackLevel;
 import com.logic.feedback.api.FeedbackAPI;
 import com.logic.feedback.api.INDProofFeedback;
 import com.logic.feedback.nd.NDFeedbacks;
 import com.logic.feedback.nd.algorithm.*;
 import com.logic.feedback.nd.algorithm.proofs.strategies.SizeTrimStrategy;
+import com.logic.feedback.nd.algorithm.transition.ITransitionGraph;
+import com.logic.feedback.nd.algorithm.transition.TransitionGraphFOL;
+import com.logic.feedback.nd.algorithm.transition.TransitionGraphPL;
 import com.logic.feedback.nd.hints.Hints;
+import com.logic.nd.asts.binary.ASTEExist;
 import com.logic.others.Utils;
 import com.logic.server.api.Components;
-import com.logic.server.data.ProofDTO;
-import com.logic.server.data.ProofProblemDAO;
-import com.logic.server.data.ProofProblemDTO;
-import com.logic.server.data.ProofProblemRepository;
+import com.logic.server.data.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -141,11 +150,11 @@ public class NDProofsApp {
             mainPremises.add(isFOL ? LogicAPI.parseFOL(premise) : LogicAPI.parsePL(premise));
 
 
-        for(int i =0 ; i < goal.length; i++)
+        for (int i = 0; i < goal.length; i++)
             System.out.println(goal[i]);
         try {
             LogicAPI.parseFOL(goal[0]);
-        }catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         IFormula goalConclusion = isFOL ? LogicAPI.parseFOL(goal[goal.length - 1]) :
@@ -157,6 +166,40 @@ public class NDProofsApp {
             goalPremises.add(isFOL ? LogicAPI.parseFOL(premise) : LogicAPI.parsePL(premise));
 
         return Hints.generateHint(mainConclusion, mainPremises, goalConclusion, goalPremises, feedbackLevel, isFOL);
+    }
+
+    public SetExpDTO listPossibleFormulas(String[] exps, boolean isFOL) {
+        Set<IFormula> expressions = new HashSet<>();
+        Set<AASTTerm> terms = new HashSet<>();
+
+        for (String premise : exps) {
+            if(!isFOL) expressions.add(LogicAPI.parsePL(premise));
+            else {
+               IFOLFormula fol = LogicAPI.parseFOL(premise);
+               fol.iterateTerms().forEachRemaining(terms::add);
+               expressions.add(fol);
+            }
+        }
+
+        ITransitionGraph tg = isFOL ?
+                new TransitionGraphFOL(expressions, Set.of(), terms) :
+                new TransitionGraphPL(expressions, Set.of());
+        tg.build();
+
+        Set<IASTExp> formulas = new HashSet<>(tg.getExplored().keySet());
+        Set<IASTExp> parenthesis = new HashSet<>();
+
+        for (IASTExp exp : formulas) {
+            try {
+                parenthesis.add((isFOL ?
+                        LogicAPI.parseFOL(new ASTParenthesis(exp).toString()).getAST() :
+                        LogicAPI.parsePL(new ASTParenthesis(exp).toString()).getAST()
+                ));
+            }catch (Exception ignored) {}
+        }
+
+        formulas.addAll(parenthesis);
+        return new SetExpDTO(formulas);
     }
 
 }

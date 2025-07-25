@@ -3,6 +3,7 @@ package com.logic.server;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.logic.others.Utils;
+import com.logic.server.application.NDProofsApp;
 import com.logic.server.data.ProofProblemDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ class NDProofsControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private NDProofsApp nDProofsApp;
 
     @Test
     void testPLProblems() throws Exception {
@@ -118,7 +121,8 @@ class NDProofsControllerTests {
         Map<String, Object> resultMap = objectMapper.readValue(result, Map.class);
         Map<String, Object> results = (Map<String, Object>) resultMap.get("result");
         List<ProofProblemDTO> proofProblems = objectMapper.convertValue(results.get("content"),
-                new TypeReference<>() {});
+                new TypeReference<>() {
+                });
 
         for (ProofProblemDTO problem : proofProblems) {
             String[] problemArray = Stream.concat(
