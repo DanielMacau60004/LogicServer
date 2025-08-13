@@ -65,13 +65,15 @@ public class SampleProblems implements CommandLineRunner {
                 //createNDProofProblem("((a → a) ∧ (a → a)) ∧ ((a → a) ∧ (a → a))", false),
                 //createNDProofProblem("((p → q) → (¬p ∨ q)) ∧ ((¬p ∨ q) → (p → q))",false),
                 //createNDProofProblem("(((p ∧ q) ∨ (p ∧ ¬q)) ∨ (¬p ∧ q)) ∨ (¬p ∧ ¬q)",false),
-                //createNDProofProblem("(((p → (q ∨ s)) ∧ ((p ∧ r) → s)) ∧ ((s ∧ t) → (p ∨ ¬q))) → (((p ∧ (q → r)) → s) ∧ (((q ∧ s) ∧ t) → p))", false),
+                createNDProofProblem("(((p → (q ∨ s)) ∧ ((p ∧ r) → s)) ∧ ((s ∧ t) → (p ∨ ¬q))) → (((p ∧ (q → r)) → s) ∧ (((q ∧ s) ∧ t) → p))", false),
                 //createNDProofProblem("((p ∨ q) ∨ (r ∨ s)) → ((p ∨ s) ∨ (r ∨ q))", false),
                 //createNDProofProblem("(s ∨ t) → (s → ¬t); (s → ¬t) → (t → k); s ∨ t; s ∨ k", false),
                 //createNDProofProblem("(¬a ∨ ¬b) → ((c → (a ∧ b)) → ¬c)", false),
 
                 createNDProofProblem("a; ¬¬a", false),
                 createNDProofProblem("a → ¬¬a", false),
+                createNDProofProblem("(p → q) → q; ¬q → p", false),
+                createNDProofProblem("p → (q ∨ r); (p → q) ∨ (p → r)", false),
 
                 //createNDProofProblem("∀x P(x) ∨ ∀x Q(x); ∀x (P(x) ∨ Q(x))", true),
                 //createNDProofProblem("∀x (P(x) ∧ Q(x)); ∀x P(x) ∧ ∀x Q(x)", true),
