@@ -57,6 +57,7 @@ public class SampleProblems implements CommandLineRunner {
                 //createNDProofProblem("(a ∧ b) ∨ (a ∧ c); a ∧ (b ∨ c)", false),
                 //createNDProofProblem("(a → b) ∧ (b → a); ((a ∧ c) → (b ∧ c)) ∧ ((b ∧ c) → (a ∧ c))", false),
                 //createNDProofProblem("¬(¬a ∨ ¬b); a ∧ b", false),
+                createNDProofProblem("(p → q) → p; q → p", false),
 
                 //createNDProofProblem("¬p → q; r ∨ ¬q; p → (a ∨ b); ¬r ∧ ¬b; a", false),
                 //createNDProofProblem("(p ∧ q) → (r ∨ s); (p → r) ∨ (q → s)", false),
@@ -69,8 +70,8 @@ public class SampleProblems implements CommandLineRunner {
                 //createNDProofProblem("(s ∨ t) → (s → ¬t); (s → ¬t) → (t → k); s ∨ t; s ∨ k", false),
                 //createNDProofProblem("(¬a ∨ ¬b) → ((c → (a ∧ b)) → ¬c)", false),
 
-                //createNDProofProblem("a; ¬¬a", false),
-                //createNDProofProblem("a → ¬¬a", false),
+                createNDProofProblem("a; ¬¬a", false),
+                createNDProofProblem("a → ¬¬a", false),
 
                 //createNDProofProblem("∀x P(x) ∨ ∀x Q(x); ∀x (P(x) ∨ Q(x))", true),
                 //createNDProofProblem("∀x (P(x) ∧ Q(x)); ∀x P(x) ∧ ∀x Q(x)", true),
