@@ -149,14 +149,12 @@ public class NDProofsApp {
         for (String premise : Arrays.copyOf(problem, problem.length - 1))
             mainPremises.add(isFOL ? LogicAPI.parseFOL(premise) : LogicAPI.parsePL(premise));
 
-
-        for (int i = 0; i < goal.length; i++)
-            System.out.println(goal[i]);
         try {
             LogicAPI.parseFOL(goal[0]);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+
         IFormula goalConclusion = isFOL ? LogicAPI.parseFOL(goal[goal.length - 1]) :
                 LogicAPI.parsePL(goal[goal.length - 1]);
         Set<IFormula> goalPremises = new HashSet<>();
