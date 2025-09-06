@@ -109,10 +109,11 @@ public class NDProofsApp {
                         .addPremises(premises))
                 .setAlgoSettingsBuilder(
                         new AlgoSettingsBuilder()
-                                .setTimeout(2000)
-                                .setHypothesesPerGoal(Integer.MAX_VALUE)
-                                .setTotalClosedNodes(Integer.MAX_VALUE)
-                                .setTrimStrategy(new SizeTrimStrategy()))
+                                //.setTimeout(1000)
+                                //.setHypothesesPerGoal(Integer.MAX_VALUE)
+                                //.setTotalClosedNodes(Integer.MAX_VALUE)
+                                .setTrimStrategy(new SizeTrimStrategy())
+                                )
                 .build();
 
         return new ProofDTO(NDFeedbacks.parseNDPLFeedback(proof.getAST(), FeedbackLevel.NONE));
@@ -134,7 +135,7 @@ public class NDProofsApp {
                         new AlgoSettingsBuilder()
                                 .setTotalClosedNodes(10000)
                                 .setHypothesesPerGoal(4)
-                                .setTimeout(2000)
+                                .setTimeout(1500)
                                 .setTrimStrategy(new SizeTrimStrategy()))
                 .build();
 

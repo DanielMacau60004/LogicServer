@@ -24,8 +24,8 @@ public class SampleProblems implements CommandLineRunner {
         if (userRepository.count() > 0) return;
 
         List<ProofProblemDAO> users = List.of(
-                //createNDProofProblem("a → (a ∨ b)", false),
-                //createNDProofProblem("(a ∨ a) → a", false),
+                createNDProofProblem("φ → (φ ∨ b)", false),
+                createNDProofProblem("(a ∨ a) → a", false),
                 //createNDProofProblem("(a ∧ b) → a", false),
                 //createNDProofProblem("a → (b → a)", false),
                 createNDProofProblem("((a → b) ∧ (b → c)) → (a → c)", false),
@@ -45,9 +45,9 @@ public class SampleProblems implements CommandLineRunner {
                 //createNDProofProblem("a ∨ (a → b)", false),
                 //createNDProofProblem("(a → b) ∨ (b → d)", false),
 
-                //createNDProofProblem("¬a ∨ b; a → b", false),
-                //createNDProofProblem("a → b; ¬a ∨ b", false),
-                //createNDProofProblem("¬(a ∧ b); ¬a ∨ ¬b", false),
+                createNDProofProblem("¬a ∨ b; a → b", false),
+                createNDProofProblem("a → b; ¬a ∨ b", false),
+                createNDProofProblem("¬(a ∧ b); ¬a ∨ ¬b", false),
                 //createNDProofProblem("¬a ∨ ¬b; ¬(a ∧ b)", false),
                 //createNDProofProblem("¬(a ∨ b); ¬a ∧ ¬b", false),
                 //createNDProofProblem("¬a ∧ ¬b; ¬(a ∨ b)", false),
@@ -62,12 +62,12 @@ public class SampleProblems implements CommandLineRunner {
                 //createNDProofProblem("¬p → q; r ∨ ¬q; p → (a ∨ b); ¬r ∧ ¬b; a", false),
                 //createNDProofProblem("(p ∧ q) → (r ∨ s); (p → r) ∨ (q → s)", false),
 
-                //createNDProofProblem("((a → a) ∧ (a → a)) ∧ ((a → a) ∧ (a → a))", false),
-                //createNDProofProblem("((p → q) → (¬p ∨ q)) ∧ ((¬p ∨ q) → (p → q))",false),
+                createNDProofProblem("((a → a) ∧ (a → a)) ∧ ((a → a) ∧ (a → a))", false),
+                createNDProofProblem("((p → q) → (¬p ∨ q)) ∧ ((¬p ∨ q) → (p → q))",false),
                 //createNDProofProblem("(((p ∧ q) ∨ (p ∧ ¬q)) ∨ (¬p ∧ q)) ∨ (¬p ∧ ¬q)",false),
                 //createNDProofProblem("(((p → (q ∨ s)) ∧ ((p ∧ r) → s)) ∧ ((s ∧ t) → (p ∨ ¬q))) → (((p ∧ (q → r)) → s) ∧ (((q ∧ s) ∧ t) → p))", false),
-                //createNDProofProblem("((p ∨ q) ∨ (r ∨ s)) → ((p ∨ s) ∨ (r ∨ q))", false),
-                //createNDProofProblem("(s ∨ t) → (s → ¬t); (s → ¬t) → (t → k); s ∨ t; s ∨ k", false),
+                createNDProofProblem("((p ∨ q) ∨ (r ∨ s)) → ((p ∨ s) ∨ (r ∨ q))", false),
+                createNDProofProblem("(s ∨ t) → (s → ¬t); (s → ¬t) → (t → k); s ∨ t; s ∨ k", false),
                 //createNDProofProblem("(¬a ∨ ¬b) → ((c → (a ∧ b)) → ¬c)", false),
 
                 createNDProofProblem("a; ¬¬a", false),
@@ -85,15 +85,15 @@ public class SampleProblems implements CommandLineRunner {
                 createNDProofProblem("∃y ∀x φ; ∀x ∃y φ", true),
                 createNDProofProblem("∃x ¬P(x) → ¬∀x P(x)", true),
                 createNDProofProblem("¬∀x P(x); ∃x ¬P(x)", true),
-                //createNDProofProblem("∀x ¬P(x) → ¬∃x P(x)", true),
-                //createNDProofProblem("¬∃x P(x) → ∀x ¬P(x)", true),
-                //createNDProofProblem("∃x φ → ¬∀x ¬φ", true),
-                //createNDProofProblem("¬∀x ¬φ; ∃x φ", true),
-                //createNDProofProblem("∀x φ → ¬∃x ¬φ", true),
-                //createNDProofProblem("∀y (C(y) ∨ D(y)); ∀x (C(x) → L(x)); ∃x ¬L(x); ∃x D(x)", true),
+                createNDProofProblem("∀x ¬P(x) → ¬∃x P(x)", true),
+                createNDProofProblem("¬∃x P(x) → ∀x ¬P(x)", true),
+                createNDProofProblem("∃x φ → ¬∀x ¬φ", true),
+                createNDProofProblem("¬∀x ¬φ; ∃x φ", true),
+                createNDProofProblem("∀x φ → ¬∃x ¬φ", true),
+                createNDProofProblem("∀y (Cao(y) ∨ Dani(y)); ∀x (Cao(x) → Laura(x)); ∃x ¬Laura(x); ∃x Dani(x)", true)
                 //createNDProofProblem("∀x (C(x) → S(x)); ∀x (¬A(x,b) → ¬S(x)); ∀x ((C(x)∨S(x)) → A(x,b))", true),
                 //createNDProofProblem("L(a,b); ∀x (∃y (L(y,x) ∨ L(x,y)) → L(x,x)); ∃x L(x,a)", true),
-                createNDProofProblem("∀x ∀y (L(x,y) → L(y,x)); ∃x ∀y L(x,y); ∀x ∃y L(x,y)", true)
+                //createNDProofProblem("∀x ∀y (L(x,y) → L(y,x)); ∃x ∀y L(x,y); ∀x ∃y L(x,y)", true)
                 //createNDProofProblem("P(a) → ∃x Q(x); ∃x(P(a) → Q(x))", true)
 
         );
