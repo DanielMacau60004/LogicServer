@@ -84,7 +84,7 @@
         <dependency>
             <groupId>com.github.DanielMacau60004</groupId>
             <artifactId>LogicFeedback</artifactId>
-            <version>main-SNAPSHOT</version>
+            <version>07d02b39d2</version>
         </dependency>
 
         <!--
