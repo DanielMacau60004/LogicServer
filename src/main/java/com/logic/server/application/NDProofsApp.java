@@ -85,12 +85,6 @@ public class NDProofsApp {
             else premises.add(formula);
         }
 
-        try {
-            System.out.println(Utils.getToken(new ObjectMapper().writeValueAsString(tree)));
-            System.out.println(Utils.getToken(tree.toString()));
-        } catch (Exception e) {
-        }
-
         INDProofFeedback ndProof = isFOL ? FeedbackAPI.parseNDFOLProblem(tree.toString(), feedbackLevel, premises, conclusion)
                 : FeedbackAPI.parseNDPLProblem(tree.toString(), feedbackLevel, premises, conclusion);
 

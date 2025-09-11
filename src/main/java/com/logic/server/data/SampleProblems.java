@@ -90,7 +90,7 @@ public class SampleProblems implements CommandLineRunner {
                 createNDProofProblem("∃x φ → ¬∀x ¬φ", true),
                 createNDProofProblem("¬∀x ¬φ; ∃x φ", true),
                 createNDProofProblem("∀x φ → ¬∃x ¬φ", true),
-                createNDProofProblem("∀y (Cao(y) ∨ Dani(y)); ∀x (Cao(x) → Laura(x)); ∃x ¬Laura(x); ∃x Dani(x)", true)
+                createNDProofProblem("∀y (Person(y) ∨ Living(y)); ∀x (Person(x) → KnowsLogic(x)); ∃x ¬KnowsLogic(x); ∃x Living(x)", true)
                 //createNDProofProblem("∀x (C(x) → S(x)); ∀x (¬A(x,b) → ¬S(x)); ∀x ((C(x)∨S(x)) → A(x,b))", true),
                 //createNDProofProblem("L(a,b); ∀x (∃y (L(y,x) ∨ L(x,y)) → L(x,x)); ∃x L(x,a)", true),
                 //createNDProofProblem("∀x ∀y (L(x,y) → L(y,x)); ∃x ∀y L(x,y); ∀x ∃y L(x,y)", true)
