@@ -81,7 +81,9 @@ public class NDProofsController implements NDProofsAPI {
     @Override
     public ResponseEntity<String> verifyPLProblem(Components.TreeComponent tree, String[] problem, FeedbackLevel feedbackLevel) {
         try {
-            return ResponseDTO.entity(ndProofsApp.verifyProblem(tree, problem, feedbackLevel, false));
+            var a = ResponseDTO.entity(ndProofsApp.verifyProblem(tree, problem, feedbackLevel, false));
+            System.out.println(a.getBody());
+            return a;
         } catch (Exception e) {
             return ResponseDTO.error(e, HttpStatus.BAD_REQUEST);
         }

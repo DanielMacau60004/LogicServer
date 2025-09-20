@@ -121,8 +121,7 @@ class NDProofsControllerTests {
         Map<String, Object> resultMap = objectMapper.readValue(result, Map.class);
         Map<String, Object> results = (Map<String, Object>) resultMap.get("result");
         List<ProofProblemDTO> proofProblems = objectMapper.convertValue(results.get("content"),
-                new TypeReference<>() {
-                });
+                new TypeReference<>() {});
 
         for (ProofProblemDTO problem : proofProblems) {
             String[] problemArray = Stream.concat(

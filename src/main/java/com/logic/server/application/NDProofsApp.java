@@ -69,6 +69,7 @@ public class NDProofsApp {
         INDProofFeedback ndProof = isFOL ? FeedbackAPI.parseNDFOL(tree.toString(), feedbackLevel)
                 : FeedbackAPI.parseNDPL(tree.toString(), feedbackLevel);
 
+        System.out.println(ndProof.getProof().toString());
         return new ProofDTO(ndProof);
     }
 
