@@ -9,10 +9,6 @@ import com.logic.nd.ERule;
 import com.logic.others.Utils;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -53,51 +49,61 @@ public class Components {
             @JsonSubTypes.Type(value = RuleComponent.class, name = "RULE"),
             @JsonSubTypes.Type(value = TreeComponent.class, name = "TREE")
     })
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static abstract class Component {
-        @Getter
         public String type;
         public Map<String, List<Component>> errors;
+
+        public Component() {
+            this.errors = new LinkedHashMap<>();
+        }
 
         public Component(String type) {
             this.type = type;
             this.errors = new LinkedHashMap<>();
         }
+
+        public String getType() {
+            return type;
+        }
+
+        public Map<String, List<Component>> getErrors() {
+            return errors;
+        }
+
+        public void setErrors(Map<String, List<Component>> errors) {
+            this.errors = errors;
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class ExpComponent extends Component {
         public String value;
         public MarkComponent mark;
         public boolean genHints;
         public Map<String, String> env;
 
+        public ExpComponent() {
+            super("EXP");
+        }
+
         public ExpComponent(IExpFeedback feedback, Map<String, String> env) {
             super("EXP");
             this.value = Utils.getToken(feedback.getExp());
-
             this.env = env;
             if (feedback.hasFeedback())
                 errors.put(feedback.getFeedback(), null);
-
             this.genHints = feedback.canGenHints();
         }
 
         public ExpComponent(INDFeedback feedback) {
             super("EXP");
             this.value = Utils.getToken(feedback.getConclusion().getExp());
-
             if (!feedback.getMarks().isEmpty())
-                this.mark = new MarkComponent(feedback.getMarks().getFirst());
-
+                this.mark = new MarkComponent(feedback.getMarks().get(0));
             if (feedback.getConclusion().hasFeedback())
-                errors.put(feedback.getConclusion().getFeedback(), feedback.getConclusion().getPreviews().stream()
-                        .map(Components::createComponent).toList());
-
+                errors.put(feedback.getConclusion().getFeedback(),
+                        feedback.getConclusion().getPreviews().stream()
+                                .map(Components::createComponent).toList());
             this.env = feedback.getEnv();
             this.genHints = feedback.getConclusion().canGenHints();
         }
@@ -108,13 +114,15 @@ public class Components {
             if (mark != null) return "[H," + mark + "] [" + str + "]";
             return str;
         }
-
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    @NoArgsConstructor
     public static class MarkComponent extends Component {
         public String value;
+
+        public MarkComponent() {
+            super("MARK");
+        }
 
         public MarkComponent(String value) {
             super("MARK");
@@ -128,10 +136,12 @@ public class Components {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class RuleComponent extends Component {
         public String value;
+
+        public RuleComponent() {
+            super("RULE");
+        }
 
         public RuleComponent(ERule value) {
             super("RULE");
@@ -145,8 +155,6 @@ public class Components {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class TreeComponent extends Component {
         public ExpComponent conclusion;
         public List<MarkComponent> marks;
@@ -155,29 +163,29 @@ public class Components {
         public boolean genHints;
         public Map<String, String> env;
 
+        public TreeComponent() {
+            super("TREE");
+        }
+
         public TreeComponent(INDFeedback feedback) {
             super("TREE");
-
             this.conclusion = new ExpComponent(feedback.getConclusion(), feedback.getEnv());
             this.marks = feedback.getMarks().stream().map(MarkComponent::new).collect(Collectors.toList());
             this.rule = new RuleComponent(feedback.getRule());
             this.hypotheses = feedback.getHypotheses().stream().map(Components::createComponent).toList();
             this.genHints = feedback.canGenHints();
-
             if (feedback.hasFeedback())
-                errors.put(feedback.getFeedback(), feedback.getPreviews().stream()
-                        .map(Components::createComponent).toList());
+                errors.put(feedback.getFeedback(),
+                        feedback.getPreviews().stream().map(Components::createComponent).toList());
         }
 
         @Override
         public String toString() {
             if (marks == null || hypotheses == null || rule == null)
                 return conclusion.toString();
-
             String strMarks = marks.isEmpty() ? "" : "," + marks.stream().map(Object::toString).collect(Collectors.joining(","));
             String strHyp = hypotheses.stream().map(Object::toString).collect(Collectors.joining());
             return "[" + rule + strMarks + "] [" + conclusion + strHyp + "]";
         }
-
     }
 }
