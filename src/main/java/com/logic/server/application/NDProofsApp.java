@@ -65,11 +65,9 @@ public class NDProofsApp {
     }
 
     public ProofDTO verifyGeneralProblem(Components.TreeComponent tree, FeedbackLevel feedbackLevel, boolean isFOL) {
-        System.out.println(tree.toString() + " " + isFOL);
         INDProofFeedback ndProof = isFOL ? FeedbackAPI.parseNDFOL(tree.toString(), feedbackLevel)
                 : FeedbackAPI.parseNDPL(tree.toString(), feedbackLevel);
 
-        System.out.println(ndProof.getProof().toString());
         return new ProofDTO(ndProof);
     }
 
