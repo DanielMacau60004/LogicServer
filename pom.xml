@@ -66,6 +66,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
             <scope>provided</scope>
         </dependency>
 
@@ -98,15 +99,31 @@
           -->
 
 
-                   </dependencies>
+    </dependencies>
 
-                   <build>
-                       <plugins>
-                           <plugin>
-                               <groupId>org.springframework.boot</groupId>
-                               <artifactId>spring-boot-maven-plugin</artifactId>
-                           </plugin>
-                       </plugins>
-                   </build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.30</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
 
-                </project>
+        </plugins>
+    </build>
+
+
+</project>
